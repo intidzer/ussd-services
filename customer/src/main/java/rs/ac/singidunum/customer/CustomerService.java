@@ -1,9 +1,11 @@
 package rs.ac.singidunum.customer;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
-public record CustomerService(CustomerRepository customerRepository) {
+public record CustomerService(CustomerRepository customerRepository,
+                              RestTemplate restTemplate) {
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -15,6 +17,18 @@ public record CustomerService(CustomerRepository customerRepository) {
         //todo: check if email is valid
         //todo: check if email is not taken
         customerRepository.save(customer);
+        // TODO: 8/10/2022 check if is fraudster
+        FraudsterResponse response = restTemplate.getForObject(
+                "http://localhost:8081/api/v1/fraud-checK",
+                FraudsterResponse.class,
+                customer.getId()
+        );
+
+        if (response != null && response.isFraudster()) {
+            throw new IllegalStateException("Customer is a fraudster");
+        }
+
+        // TODO: 8/10/2022 send notification
 
     }
 }
