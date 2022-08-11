@@ -1,11 +1,16 @@
 package rs.ac.singidunum.customer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import rs.ac.singidunum.clients.fraud.FraudClient;
+import rs.ac.singidunum.clients.fraud.FraudsterResponse;
 
+@Slf4j
 @Service
 public record CustomerService(CustomerRepository customerRepository,
-                              RestTemplate restTemplate) {
+                              RestTemplate restTemplate,
+                              FraudClient fraudClient) {
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -19,11 +24,9 @@ public record CustomerService(CustomerRepository customerRepository,
         // TODO: 8/11/2022 check phone number is valid
         customerRepository.save(customer);
         // TODO: 8/10/2022 check if is fraudster
-        FraudsterResponse response = restTemplate.getForObject(
-                "http://FRAUD/api/v1/fraud-check/{customerId}",
-                FraudsterResponse.class,
-                customer.getId()
-        );
+
+        FraudsterResponse response = fraudClient.isFraudster(customer.getId());
+        log.info("response: {}", response.isFraudster());
 
         if (response != null && response.isFraudster()) {
             throw new IllegalStateException("Customer is a fraudster");

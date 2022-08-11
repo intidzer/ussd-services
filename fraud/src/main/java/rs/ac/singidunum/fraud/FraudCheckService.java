@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
 @Slf4j
+@Service
 public record FraudCheckService(FraudCheckHistoryRepository repository) {
 
     public boolean isFraudulentCustomer(Integer customerId) {
@@ -23,3 +23,4 @@ public record FraudCheckService(FraudCheckHistoryRepository repository) {
         repository.save(fraudCheckHistory);
     }
 }
+
