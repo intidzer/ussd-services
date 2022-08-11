@@ -16,10 +16,11 @@ public record CustomerService(CustomerRepository customerRepository,
 
         //todo: check if email is valid
         //todo: check if email is not taken
+        // TODO: 8/11/2022 check phone number is valid
         customerRepository.save(customer);
         // TODO: 8/10/2022 check if is fraudster
         FraudsterResponse response = restTemplate.getForObject(
-                "http://localhost:8081/api/v1/fraud-checK",
+                "http://FRAUD/api/v1/fraud-check/{customerId}",
                 FraudsterResponse.class,
                 customer.getId()
         );
