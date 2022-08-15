@@ -1,4 +1,4 @@
-package rs.ac.singidunum.utils.email;
+package rs.ac.singidunum.notification.email;
 
 import rs.ac.singidunum.notification.Notification;
 

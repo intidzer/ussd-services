@@ -1,5 +1,6 @@
-package rs.ac.singidunum.utils.email;
+package rs.ac.singidunum.notification.email;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -12,7 +13,10 @@ import javax.mail.internet.MimeMessage;
 
 @Slf4j
 @Service
-public record EmailService(JavaMailSender mailSender) implements EmailSender {
+@AllArgsConstructor
+public class EmailService implements EmailSender {
+
+    private final JavaMailSender mailSender;
 
     @Override
     @Async

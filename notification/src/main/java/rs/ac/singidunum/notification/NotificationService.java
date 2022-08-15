@@ -1,36 +1,28 @@
 package rs.ac.singidunum.notification;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import rs.ac.singidunum.clients.notification.NotificationRequest;
-import rs.ac.singidunum.utils.email.EmailSender;
+import rs.ac.singidunum.notification.config.NotificationConfigurationProperties;
+import rs.ac.singidunum.notification.email.EmailSender;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class NotificationService {
-
-    private final EmailSender emailSender;
-    private final NotificationRepository notificationRepository;
-
-    @Value("${notification.default.subject}")
-    private String defaultSubject;
-    @Value("${notification.default.sender}")
-    private String defaultSender;
+public record NotificationService(EmailSender emailSender,
+                                  NotificationRepository notificationRepository,
+                                  NotificationConfigurationProperties notificationProperties) {
 
     public void sendNotification(NotificationRequest notificationRequest) {
 
         Notification notification = Notification.builder()
-                                .toCustomerId(notificationRequest.toCustomerId())
-                                .toCustomerEmail(notificationRequest.toCustomerEmail())
-                                .message(notificationRequest.message())
-                                .sender(defaultSender)
-                                .build();
+                .toCustomerId(notificationRequest.toCustomerId())
+                .toCustomerEmail(notificationRequest.toCustomerEmail())
+                .message(notificationRequest.message())
+                .sender(notificationProperties.getSender())
+                .build();
 
         try {
-            emailSender.send(notification, defaultSubject);
+            emailSender.send(notification, notificationProperties.getSubject());
             notificationRepository.save(notification);
         } catch (Exception e) {
             log.error("Failure for notification execution {}", e.toString());

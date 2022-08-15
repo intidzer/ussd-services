@@ -40,6 +40,10 @@
       <version>${eureka.client.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-sleuth</artifactId>
+    </dependency>
+    <dependency>
       <groupId>rs.ac.singidunum</groupId>
       <artifactId>clients</artifactId>
       <version>${ussd.clients.version}</version>

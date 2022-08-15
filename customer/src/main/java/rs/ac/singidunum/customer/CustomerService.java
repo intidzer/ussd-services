@@ -1,23 +1,22 @@
 package rs.ac.singidunum.customer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import rs.ac.singidunum.clients.fraud.FraudClient;
 import rs.ac.singidunum.clients.fraud.FraudsterResponse;
 import rs.ac.singidunum.clients.notification.NotificationClient;
 import rs.ac.singidunum.clients.notification.NotificationRequest;
+import rs.ac.singidunum.customer.config.CustomerServiceConfigurationProperties;
 
 @Slf4j
 @Service
 public record CustomerService(CustomerRepository customerRepository,
                               RestTemplate restTemplate,
                               FraudClient fraudClient,
-                              NotificationClient notificationClient) {
+                              NotificationClient notificationClient,
+                              CustomerServiceConfigurationProperties properties) {
 
-    @Value("${notification.registration.message}")
-    private static String registrationMessage;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -41,9 +40,11 @@ public record CustomerService(CustomerRepository customerRepository,
 
         // TODO: 8/10/2022 send notification
 
+        log.info("Customer: {}", customer);
+
         NotificationRequest notificationRequest = new NotificationRequest(customer.getId(),
                 customer.getEmail(),
-                String.format(registrationMessage, customer.getFirstName()));
+                String.format(properties.getMessage(), customer.getFirstName()));
 
         notificationClient.sendNotification(notificationRequest);
     }
