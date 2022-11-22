@@ -1,4 +1,4 @@
-package rs.ac.singidunum.customer.config;
+package rs.ac.singidunum.customer.configs;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -2,7 +2,7 @@ package rs.ac.singidunum.fraud;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.singidunum.clients.fraud.FraudsterResponse;
+import rs.ac.singidunum.clients.fraud.FraudCheckResponse;
 
 import javax.persistence.PostUpdate;
 
@@ -12,10 +12,10 @@ import javax.persistence.PostUpdate;
 public record FraudCheckController(FraudCheckService fraudCheckService) {
 
     @GetMapping(path = "{customerId}")
-    public FraudsterResponse isFraudster(@PathVariable("customerId") Integer customerId) {
+    public FraudCheckResponse isFraudster(@PathVariable("customerId") Integer customerId) {
         log.info("Fraud check for customer {}", customerId);
         boolean isFraudulentCustomer = fraudCheckService.isFraudulentCustomer(customerId);
-        return new FraudsterResponse(isFraudulentCustomer);
+        return new FraudCheckResponse(isFraudulentCustomer);
     }
 
     @PostMapping

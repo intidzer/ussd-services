@@ -22,8 +22,8 @@ public record NotificationService(EmailSender emailSender,
                 .build();
 
         try {
-            emailSender.send(notification, notificationProperties.getSubject());
             notificationRepository.save(notification);
+            emailSender.send(notification, notificationProperties.getSubject());
         } catch (Exception e) {
             log.error("Failure for notification execution {}", e.toString());
         }

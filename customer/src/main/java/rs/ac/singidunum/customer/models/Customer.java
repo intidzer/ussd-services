@@ -1,4 +1,4 @@
-package rs.ac.singidunum.customer;
+package rs.ac.singidunum.customer.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
