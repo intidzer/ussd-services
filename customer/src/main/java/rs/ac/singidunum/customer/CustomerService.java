@@ -2,22 +2,20 @@ package rs.ac.singidunum.customer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import rs.ac.singidunum.amqp.RabbitMQMessageProducer;
 import rs.ac.singidunum.clients.fraud.FraudClient;
 import rs.ac.singidunum.clients.fraud.FraudCheckResponse;
-import rs.ac.singidunum.clients.notification.NotificationClient;
 import rs.ac.singidunum.clients.notification.NotificationRequest;
-import rs.ac.singidunum.customer.configs.CustomerServiceConfigurationProperties;
+import rs.ac.singidunum.customer.configs.CustomerConfig;
 import rs.ac.singidunum.customer.models.Customer;
 import rs.ac.singidunum.customer.models.CustomerRegistrationRequest;
 
 @Slf4j
 @Service
 public record CustomerService(CustomerRepository customerRepository,
-                              RestTemplate restTemplate,
                               FraudClient fraudClient,
-                              NotificationClient notificationClient,
-                              CustomerServiceConfigurationProperties properties) {
+                              CustomerConfig customerConfig,
+                              RabbitMQMessageProducer producer) {
 
 
     public void registerCustomer(CustomerRegistrationRequest request) {
@@ -40,14 +38,16 @@ public record CustomerService(CustomerRepository customerRepository,
             throw new IllegalStateException("Customer is a fraudster");
         }
 
-        // TODO: 8/10/2022 send notification
-
         log.info("Customer: {}", customer);
 
         NotificationRequest notificationRequest = new NotificationRequest(customer.getId(),
                 customer.getEmail(),
-                String.format(properties.getMessage(), customer.getFirstName()));
+                String.format(customerConfig.getMessage(), customer.getFirstName()));
 
-        notificationClient.sendNotification(notificationRequest);
+            producer.publish(
+                notificationRequest,
+                "internal.exchange",
+                "internal.notification.routing-key"
+                );
     }
 }

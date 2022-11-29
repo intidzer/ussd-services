@@ -7,7 +7,7 @@ spring:
     username: ussdservice
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -16,6 +16,9 @@ spring:
 
   zipkin:
     base-url: http://localhost:9411
+
+  rabbitmq:
+    addresses: localhost:5672
 
 server:
   port: 8080
@@ -29,4 +32,4 @@ eureka:
 
 notification:
   registration:
-    message: Wellcome %s, you've successfully registered on USSD platform
+    message: Welcome %s, you've successfully registered on USSD platform

@@ -3,14 +3,14 @@ package rs.ac.singidunum.notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rs.ac.singidunum.clients.notification.NotificationRequest;
-import rs.ac.singidunum.notification.config.NotificationConfigurationProperties;
+import rs.ac.singidunum.notification.config.NotificationConfig;
 import rs.ac.singidunum.notification.email.EmailSender;
 
 @Slf4j
 @Service
 public record NotificationService(EmailSender emailSender,
                                   NotificationRepository notificationRepository,
-                                  NotificationConfigurationProperties notificationProperties) {
+                                  NotificationConfig notificationConfig) {
 
     public void sendNotification(NotificationRequest notificationRequest) {
 
@@ -18,12 +18,13 @@ public record NotificationService(EmailSender emailSender,
                 .toCustomerId(notificationRequest.toCustomerId())
                 .toCustomerEmail(notificationRequest.toCustomerEmail())
                 .message(notificationRequest.message())
-                .sender(notificationProperties.getSender())
+                .sender(notificationConfig.getSender())
                 .build();
 
         try {
             notificationRepository.save(notification);
-            emailSender.send(notification, notificationProperties.getSubject());
+            // TODO: fix credentials for email account
+            // emailSender.send(notification, notificationConfig.getSubject());
         } catch (Exception e) {
             log.error("Failure for notification execution {}", e.toString());
         }
