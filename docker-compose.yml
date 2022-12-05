@@ -1,7 +1,7 @@
 services:
   postgres-customer:
     container_name: postgres-customer
-    image: postgres
+    image: postgres:15.1-alpine
     environment:
       POSTGRES_USER: ussdservice
       POSTGRES_PASSWORD: password
@@ -16,7 +16,7 @@ services:
 
   postgres-fraud:
     container_name: postgres-fraud
-    image: postgres
+    image: postgres:15.1-alpine
     environment:
       POSTGRES_USER: ussdservice
       POSTGRES_PASSWORD: password
@@ -31,7 +31,7 @@ services:
 
   postgres-notification:
     container_name: postgres-notification
-    image: postgres
+    image: postgres:15.1-alpine
     environment:
       POSTGRES_USER: ussdservice
       POSTGRES_PASSWORD: password
@@ -64,6 +64,8 @@ services:
     container_name: zipkin
     ports:
       - "9411:9411"
+    networks:
+      - spring
 
   rabbitmq:
     image: rabbitmq:3.9.11-management-alpine
@@ -71,10 +73,87 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - spring
+
+  eureka-server:
+    image: nikolajovanovic93/eureka-server
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8761:8761"
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+
+  apigw:
+    image: nikolajovanovic93/apigw
+    container_name: apigw
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8083:8083"
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+      - eureka-server
+
+  notification:
+    image: nikolajovanovic93/notification
+    container_name: notification
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8088:8088"
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres-notification
+      - rabbitmq
+
+  fraud:
+    image: nikolajovanovic93/fraud
+    container_name: fraud
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8081:8081"
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres-fraud
+
+  customer:
+    image: nikolajovanovic93/customer
+    container_name: customer
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - eureka-server
+      - postgres-customer
+      - notification
+      - fraud
+      - rabbitmq
 
 networks:
   postgres:
-    name: postgres
+    driver: bridge
+  spring:
     driver: bridge
 
 volumes:
