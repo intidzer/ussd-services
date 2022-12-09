@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-notification
+  labels:
+    app: postgres-notification
+spec:
+  serviceName: postgres-notification
+  replicas: 1
+  template:
+    metadata:
+      name: postgres-notification
+      labels:
+        app: postgres-notification
+    spec:
+      volumes:
+        - name: postgres-notification
+          persistentVolumeClaim:
+            claimName: postgres-notification-pvc
+      containers:
+        - name: postgres-notification
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: postgres-notification
+          envFrom:
+            - configMapRef:
+                name: postgres-notification-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: postgres-notification

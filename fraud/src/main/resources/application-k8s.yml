@@ -4,7 +4,7 @@ spring:
   datasource:
     password: password
     url: jdbc:postgresql://postgres-fraud:5432/fraud
-    username: ussdservice
+    username: ussd
   jpa:
     hibernate:
       ddl-auto: create-drop

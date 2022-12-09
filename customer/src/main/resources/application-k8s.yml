@@ -4,7 +4,7 @@ spring:
   datasource:
     password: password
     url: jdbc:postgresql://postgres-customer:5432/customer
-    username: ussdservice
+    username: ussd
   jpa:
     hibernate:
       ddl-auto: create-drop

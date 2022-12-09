@@ -7,7 +7,7 @@ spring:
   datasource:
     password: password
     url: jdbc:postgresql://postgres-notification:5432/notification
-    username: ussdservice
+    username: ussd
   jpa:
     hibernate:
       ddl-auto: create-drop

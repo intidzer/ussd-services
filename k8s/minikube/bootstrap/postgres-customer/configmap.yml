@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config
+  name: postgres-customer-config
 data:
   POSTGRES_DB: customer
   POSTGRES_USER: ussd

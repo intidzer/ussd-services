@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-fraud
+  labels:
+    app: postgres-fraud
+spec:
+  serviceName: postgres-fraud
+  replicas: 1
+  template:
+    metadata:
+      name: postgres-fraud
+      labels:
+        app: postgres-fraud
+    spec:
+      volumes:
+        - name: postgres-fraud
+          persistentVolumeClaim:
+            claimName: postgres-fraud-pvc
+      containers:
+        - name: postgres-fraud
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: postgres-fraud
+          envFrom:
+            - configMapRef:
+                name: postgres-fraud-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: postgres-fraud
