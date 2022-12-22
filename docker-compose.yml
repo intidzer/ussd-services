@@ -76,17 +76,17 @@ services:
     networks:
       - spring
 
-#  eureka-server:
-#    image: nikolajovanovic93/eureka-server
-#    container_name: eureka-server
-#    environment:
-#      - SPRING_PROFILES_ACTIVE=docker
-#    ports:
-#      - "8761:8761"
-#    networks:
-#      - spring
-#    depends_on:
-#      - zipkin
+  eureka-server:
+    image: nikolajovanovic93/eureka-server
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8761:8761"
+    networks:
+      - spring
+    depends_on:
+      - zipkin
 
 #  apigw:
 #    image: nikolajovanovic93/apigw
@@ -101,50 +101,50 @@ services:
 #      - zipkin
 #      - eureka-server
 
-  notification:
-    image: nikolajovanovic93/notification
-    container_name: notification
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    ports:
-      - "8088:8088"
-    networks:
-      - spring
-      - postgres
-    depends_on:
-      - zipkin
-      - postgres-notification
-      - rabbitmq
+#  notification:
+#    image: nikolajovanovic93/notification
+#    container_name: notification
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    ports:
+#      - "8088:8088"
+#    networks:
+#      - spring
+#      - postgres
+#    depends_on:
+#      - zipkin
+#      - postgres-notification
+#      - rabbitmq
 
-  fraud:
-    image: nikolajovanovic93/fraud
-    container_name: fraud
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    ports:
-      - "8081:8081"
-    networks:
-      - spring
-      - postgres
-    depends_on:
-      - zipkin
-      - postgres-fraud
+#  fraud:
+#    image: nikolajovanovic93/fraud
+#    container_name: fraud
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    ports:
+#      - "8081:8081"
+#    networks:
+#      - spring
+#      - postgres
+#    depends_on:
+#      - zipkin
+#      - postgres-fraud
 
-  customer:
-    image: nikolajovanovic93/customer
-    container_name: customer
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    ports:
-      - "8080:8080"
-    networks:
-      - spring
-      - postgres
-    depends_on:
-      - zipkin
-      - notification
-      - fraud
-      - rabbitmq
+#  customer:
+#    image: nikolajovanovic93/customer
+#    container_name: customer
+#    environment:
+#      - SPRING_PROFILES_ACTIVE=docker
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - spring
+#      - postgres
+#    depends_on:
+#      - zipkin
+#      - notification
+#      - fraud
+#      - rabbitmq
 
 networks:
   postgres:
